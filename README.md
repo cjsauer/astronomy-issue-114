@@ -13,3 +13,7 @@ meteor
 
 #Observe correct output in console
 ```
+
+# My system:
+
+Linux 3.19.0-30-generic #34~14.04.1-Ubuntu SMP Fri x86_64 GNU/Linux
