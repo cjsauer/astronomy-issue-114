@@ -1,6 +1,5 @@
-// An Astro class used as a nested field in the User class below
-UserProfile = Astronomy.createClass({
-  name: 'UserProfile',
+Nested = Astronomy.createClass({
+  name: 'Nested',
   /* No collection attribute */
   fields: {
 
@@ -14,21 +13,15 @@ UserProfile = Astronomy.createClass({
   }
 });
 
-/*
- * An Astro wrapper around the accounts-password user collection
- */
-User = Astronomy.createClass({
-  name: 'User',
+Parents = new Mongo.Collection('parents');
+Parent = Astronomy.createClass({
+  name: 'Parent',
   // Use the built-in Accounts' user collection
-  collection: Meteor.users,
+  collection: Parents,
   fields: {
-    username: 'string',
-    emails: 'array',
-    createdAt: 'date',
-    services: 'object',
-    profile: {
+    children: {
       type: 'object',
-      nested: 'UserProfile',
+      nested: 'Nested',
       default() {
         return {};
       }
@@ -37,27 +30,27 @@ User = Astronomy.createClass({
 
   methods: {
     getWords() {
-      let words = this.get('profile.words');
+      let words = this.get('children.words');
       return words;
     },
 
     addWord(word) {
-      this.push('profile.words', word);
+      this.push('children.words', word);
       this.save();
       return this;
     },
 
     removeWord(word) {
-      let words = this.get('profile.words'),
+      let words = this.get('children.words'),
           wordIndex = words.indexOf(word);
       if(wordIndex > -1) {
         words.splice(wordIndex, 1);
 
         // This does NOT work!
-        this.set('profile.words', words);
+        this.set('children.words', words);
 
         // This DOES work!
-        // this.profile.words = words;
+        // this.children.words = words;
         this.save();
       }
       return this;
@@ -67,19 +60,14 @@ User = Astronomy.createClass({
 
 
 if(Meteor.isServer) {
-  Meteor.users.remove({});
-  let userId = Accounts.createUser({
-    username: 'Test',
-    password: 'password'
-  });
+  let parent = new Parent();
+  parent.save();
 
-  let user = User.findOne(userId);
-
-  user = user.addWord('test');
+  parent = parent.addWord('test');
   console.log("The array should contain one word:");
-  console.log(user.getWords().length);
+  console.log(parent.getWords().length);
 
-  user = user.removeWord('test');
+  parent = parent.removeWord('test');
   console.log("The array should contain ZERO words!");
-  console.log(user.getWords().length);
+  console.log(parent.getWords().length);
 }
