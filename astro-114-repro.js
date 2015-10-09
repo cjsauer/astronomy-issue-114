@@ -1,5 +1,5 @@
-Nested = Astronomy.createClass({
-  name: 'Nested',
+Child = Astronomy.createClass({
+  name: 'Child',
   /* No collection attribute */
   fields: {
 
@@ -19,9 +19,9 @@ Parent = Astronomy.createClass({
   // Use the built-in Accounts' user collection
   collection: Parents,
   fields: {
-    children: {
+    child: {
       type: 'object',
-      nested: 'Nested',
+      nested: 'Child',
       default() {
         return {};
       }
@@ -30,27 +30,27 @@ Parent = Astronomy.createClass({
 
   methods: {
     getWords() {
-      let words = this.get('children.words');
+      let words = this.get('child.words');
       return words;
     },
 
     addWord(word) {
-      this.push('children.words', word);
+      this.push('child.words', word);
       this.save();
       return this;
     },
 
     removeWord(word) {
-      let words = this.get('children.words'),
+      let words = this.get('child.words'),
           wordIndex = words.indexOf(word);
       if(wordIndex > -1) {
         words.splice(wordIndex, 1);
 
         // This does NOT work!
-        this.set('children.words', words);
+        this.set('child.words', words);
 
         // This DOES work!
-        // this.children.words = words;
+        // this.child.words = words;
         this.save();
       }
       return this;
