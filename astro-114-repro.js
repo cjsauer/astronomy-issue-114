@@ -47,10 +47,10 @@ Parent = Astronomy.createClass({
         words.splice(wordIndex, 1);
 
         // This does NOT work!
-        this.set('child.words', words);
+        // this.set('child.words', words);
 
         // This DOES work!
-        // this.child.words = words;
+        this.child.words = words;
         this.save();
       }
       return this;
